@@ -30,6 +30,7 @@ class Blog(models.Model):
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_slidePost = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
