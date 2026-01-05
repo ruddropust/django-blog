@@ -31,8 +31,24 @@
           </div>
           <!--End-->
           <div class="col-4 d-flex justify-content-end align-items-center">
-            <a class="btn btn-sm btn-warning" href="#">Login</a> &nbsp;
-            <a class="btn btn-sm btn-outline-secondary" href="#">Register</a>
+            {% if not user.is_authenticated %}
+            <a class="btn btn-sm btn-warning" href="{% url "login" %}">Login</a> &nbsp;
+            <a class="btn btn-sm btn-outline-secondary" href="{% url "register" %}">Register</a>
+            {% else %}
+            <div class="dropdown">
+              <a class="btn btn-warning dropdown-toggle" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.username }}
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href=" {% url "logout" %}">Logout</a></li>
+              </ul>
+            </div>
+            {% endif %}
           </div>
         </div>
       </header>
