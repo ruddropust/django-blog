@@ -2,78 +2,28 @@
 
 {% block content %}
 <!--Edited part-->
-  <div id="controls-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
-
-    <!-- Indicators -->
-    <div class="carousel-indicators">
-      {% for post in slide_post %}
-        <button type="button"
-                data-bs-target="#controls-carousel"
-                data-bs-slide-to="{{ forloop.counter0 }}"
-                class="{% if forloop.first %}active{% endif %}"
-                aria-current="{% if forloop.first %}true{% endif %}">
-        </button>
-      {% endfor %}
-    </div>
-
-    <!-- Slides -->
-    <div class="carousel-inner">
-      {% for post in slide_post %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-          <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark"
-              style="background-image: url({{ post.featured_image.url }}); 
-                      background-blend-mode: overlay;
-                      background-size: cover;
-                      height: 400px;">
-            
-            <div class="col-md-8 px-0">
-              <h1 class="display-4 font-italic">{{ post.title }}</h1>
-              <p class="lead my-3">{{ post.short_description|truncatechars:200 }}</p>
-              <p class="lead mb-0">
-                <a href="#" class="text-white font-weight-bold">
-                  Continue reading...
-                </a>
-              </p>
-            </div>
-
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-
-    <!-- Controls -->
-    <button class="carousel-control-prev" type="button" data-bs-target="#controls-carousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-
-    <button class="carousel-control-next" type="button" data-bs-target="#controls-carousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button>
-
-  </div>
-
-<!--End-->
-
-<!--Feature post-->
-<h3 class="text-uppercase text-warning" style="letter-spacing:2px;">{{category_name}}</h3>
-
-  <div class="row">
+   <!-- Featured Posts -->
+  <h3 class="text-uppercase text-warning" style="letter-spacing: 2px;">Category - {{ category }}</h3>
+  <div class="row mb-2">
     {% if posts %}
-    {% for post in posts %}    
-    <div class="col-md-6">  
+    {% for post in posts %}
+    <div class="col-md-6">
       <div class="card border-0" >
         <div class="card-body">
-          <h3>{{post.title}}</h3>
-          <small class="mb-1 text-muted">{{post.created_at|timesince}} ago | {{post.author}}</small>
-          <p class="card-text">{{ post.short_description|truncatechars:200 }}</p>
+          <h3><a href="{% url 'blogs' post.slug %}" class="text-decoration-none text-dark font-weight-bold">{{post.title}}</a></h3>
+          <small class="mb-1 text-muted">{{ post.created_at | timesince }} ago | {{ post.author }}</small>
+          <p class="card-text">{{ post.short_description | truncatewords:25 }}</p>
         </div>
-      </div>  
+      </div>
     </div>
-     {% endfor %}    
-     {% else %}
-     <p> No post found in this category</p> 
-     {% endif %}  
+    {% endfor %}
+    {% else %}
+    <p>No posts found</p>
+    {% endif %}
+    
   </div>
+
+</div>
 
 <!--Feature post end-->
 {% endblock %}
