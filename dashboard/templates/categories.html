@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <!-- load side bar -->
+    {% include "sidebar.html" %}
+
+    <div class="col-md-9">
+        <h2 class="text-center">All Categories</h2>
+        <a href="#" class="btn btn-warning float-end mb-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addCategory">
+            Add Category
+        </a>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Category Name</th>
+                    <th scope="col">Created at</th>
+                    <th scope="col">Updated at</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for category in categories %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{category.category_name}}</td>
+                    <td>{{category.created_at}}</td>
+                    <td>{{category.updated_at}}</td>
+                    <td>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ category.id }}">
+                            <i class="fa fa-edit fa-lg" style="color: #03045E;"></i>
+                        </a>
+                        &emsp;&ensp;
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
+                            <i class="fa fa-trash fa-lg" style="color:#800517;"></i>
+                        </a>
+
+                    </td>
+                </tr>
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                Are you sure you want to delete
+                                <strong>{{ category.category_name }}</strong>?
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Cancel
+                                </button>
+
+                                <form method="post" action="{% url 'delete_category' category.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End Delete -->
+
+
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editModal{{ category.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+
+                            <form method="post" action="{% url 'edit_category' category.id %}">
+                                {% csrf_token %}
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Category</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="categoryName{{ category.id }}" class="form-label">Category
+                                            Name</label>
+                                        <input type="text" name="category_name" id="categoryName{{ category.id }}"
+                                            class="form-control" value="{{ category.category_name }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End Edit -->
+
+                <!-- End Edit -->
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+
+
+
+<!--Add Category Modal -->
+<div class="modal fade" id="addCategory" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form method="post" action="{% url "add_category" %}">
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="text" name="category_name" class="form-control" placeholder="Category Name" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

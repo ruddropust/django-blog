@@ -1,0 +1,7 @@
+    <div class="col-md-3">
+        <div class="nav flex-column nav-pills bg-light" aria-orientation="vertical">
+            <a href="{% url "dashboard" %}" class="nav-link text-dark {% if '/dashboard/' == request.path %}bg-warning{% endif %} text-center font-weight-bold fs-5 m-1"> Dashboard</a>
+            <a href="{% url "categories" %}" class="nav-link text-dark {% if '/dashboard/categories/' == request.path %}bg-warning{% endif %} text-center font-weight-bold fs-5"> Categories</a>
+            <a href="{% url "post" %}" class="nav-link text-dark  text-center {% if '/post/' in request.path %}bg-warning{% endif %} font-weight-bold fs-5"> Post</a>
+        </div>
+    </div>

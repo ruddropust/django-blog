@@ -28,6 +28,7 @@ urlpatterns = [
     path('register/', bview.register, name="register"),
     path('login/', bview.login, name="login"),
     path('logout/', bview.logout_view, name="logout"),
-    path('<slug:slug>/', bview.blogs, name='blog'),
+    path('blog/<slug:slug>/', bview.blogs, name='blog'),
     path('blogs/search/', bview.search, name="search"),
+    path('dashboard/', include('dashboard.urls')),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

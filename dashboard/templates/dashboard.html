@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+<!--Left Side Bar-->
+     <!-- load side bar here  -->
+      {% include "sidebar.html" %}
+
+
+
+<!--Right Side content-->
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col">
+                <div class="card border-default mb-3">
+                    <div class="card-header text-center text-uppercase fw-bold">All Categories</div>
+                    <div class="card-body text-dark">
+                        <h5 class="card-title text-center">{{categories_count}}</h5>
+                    </div>
+                </div>
+            </div>
+
+                        <div class="col">
+                <div class="card border-default mb-3">
+                    <div class="card-header text-center text-uppercase fw-bold">All Post</div>
+                    <div class="card-body text-dark">
+                        <h5 class="card-title text-center">{{blog_count}}</h5>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+{% endblock %}
