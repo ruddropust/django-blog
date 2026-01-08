@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <!-- load side bar -->
+    {% include "sidebar.html" %}
+    <div class="col-md-9">
+        <h2 class="text-center">All Posts</h2>
+        <div class="mb-4">
+            <a href="{% url 'add_post' %}" class="btn btn-warning float-end mb-2 fw-bold">
+                Add Post
+            </a>
+        </div>
+
+
+        <!-- Card Place Here -->
+        <!-- Cards Grid -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mt-3">
+            {% for post in posts %}
+            <div class="col">
+                <div class="card h-100 d-flex flex-column">
+                    <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.short_description|truncatewords:20 }}</p>
+
+                        <!-- Button container pushed to the bottom -->
+                        <div class="mt-auto d-flex justify-content-between">
+                            <a href="{% url "edit_post" post.id %}" class="btn btn-primary">Edit Post</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ post.id }}" class="btn btn-danger">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal{{ post.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                Are you sure you want to delete
+                                <strong>{{ post.title }}</strong>?
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Cancel
+                                </button>
+
+                                <form method="post" action="{% url 'delete_post' post.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End Delete -->
+
+
+            {% empty %}
+            <p class="text-center">No posts available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- End Cards Grid -->
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <!-- load side bar -->
+    {% include "sidebar.html" %}
+    <div class="col-md-9">
+        <h2 class="text-center">{{page_title}}</h2>
+        <div class="col-md-8 mx-auto">
+            {% load crispy_forms_tags %}
+            <form action="{% url  'edit_post' post.id%}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form | crispy }}
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="submit" class="btn btn-primary fw-bold">
+                        {{ button_text }}
+                    </button>
+
+                    <a href="{% url 'posts' %}" class="btn btn-danger fw-bold">
+                        Cancel
+                    </a>
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+    </div>
+</div>
+
+{% comment %} {% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+{% endfor %}
+{% endif %} {% endcomment %}
+
+
+{% endblock %}

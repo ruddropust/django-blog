@@ -4,6 +4,9 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from blogs.models import Blog,Category
 from django.contrib import messages
+from django.template.defaultfilters import slugify
+from dashboard.forms import AddBlogForm,EditBlogForm
+from django.utils.text import slugify
 
 # Create your views here.
 @login_required(login_url='login')
@@ -78,5 +81,85 @@ def edit_category(request, id):
     return redirect('categories')
 
 
-def post(request):
-    return render(request, 'post.html')
+
+# POst app
+def posts(request):
+    posts = Blog.objects.all().order_by('updated_at').reverse()
+
+
+    context={
+        'posts':posts,
+    }
+    return render(request, 'posts.html',context)
+
+
+
+
+def add_post(request):
+    if request.method == 'POST':
+        fm = AddBlogForm(request.POST, request.FILES)
+        if fm.is_valid():
+            post = fm.save(commit=False)
+            post.author = request.user
+
+            # Generate unique slug
+            base_slug = slugify(post.title)
+            slug = base_slug
+            counter = 1
+
+            while Blog.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            post.slug = slug
+            post.save()  # single save
+            messages.success(request, "Post added successfully!")
+            return redirect('posts')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        fm = AddBlogForm()
+
+    context = {
+        'form': fm,
+        'page_title': 'Add New Post',
+        'button_text': 'Save Post'
+    }
+    return render(request, 'add_post.html', context)
+
+
+
+def edit_post(request, id):
+    post = get_object_or_404(Blog, id=id)
+    
+    if request.method == 'POST':
+        form = EditBlogForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            updated_post = form.save(commit=False)
+            updated_post.author = request.user
+            updated_post.slug = slugify(updated_post.title)
+            updated_post.save()
+            messages.success(request, 'Post updated successfully!')
+            return redirect('posts')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = EditBlogForm(instance=post)
+
+    context = {
+        'form': form,
+        'post': post,
+        'page_title': 'Edit Post',
+        'button_text': 'Update Post'
+    }
+
+    return render(request, 'edit_post.html', context)
+
+
+def delete_post(request, id):
+    post = get_object_or_404(Blog, pk=id)
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, "Category deleted successfully!")
+        return redirect('posts')
+    return redirect('posts')
