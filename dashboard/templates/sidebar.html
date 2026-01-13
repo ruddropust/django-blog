@@ -1,7 +1,14 @@
     <div class="col-md-3">
+        {% if request.user.groups.first.name == 'manager' or request.user.groups.first.name == 'editor' or request.user.is_superuser %}
         <div class="nav flex-column nav-pills bg-light" aria-orientation="vertical">
             <a href="{% url "dashboard" %}" class="nav-link text-dark {% if '/dashboard/' == request.path %}bg-warning{% endif %} text-center font-weight-bold fs-5 m-1"> Dashboard</a>
+            {% if request.user.groups.first.name == 'manager' or request.user.is_superuser %}
+                <a href="{% url "users" %}" class="nav-link text-dark {% if '/users/' in request.path %}bg-warning{% endif %} text-center font-weight-bold fs-5 m-1"> Users</a>
+            {% endif%}
             <a href="{% url "categories" %}" class="nav-link text-dark {% if '/dashboard/categories/' == request.path %}bg-warning{% endif %} text-center font-weight-bold fs-5"> Categories</a>
             <a href="{% url "posts" %}" class="nav-link text-dark  text-center {% if '/posts/' in request.path %}bg-warning{% endif %} font-weight-bold fs-5"> Post</a>
         </div>
+        {% else %}
+            <h3>You do not have permission to access this page.</h3>
+        {% endif %}
     </div>

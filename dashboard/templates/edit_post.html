@@ -3,6 +3,8 @@
 {% block content %}
 
 <div class="row">
+    {% if request.user.groups.first.name == 'manager' or request.user.groups.first.name == 'editor' or request.user.is_superuser %}
+
     <!-- load side bar -->
     {% include "sidebar.html" %}
     <div class="col-md-9">
@@ -36,6 +38,8 @@
 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
 {% endfor %}
 {% endif %} {% endcomment %}
-
+{% else %}
+<h3>You do not have permission to access this page.</h3>
+{% endif %}
 
 {% endblock %}

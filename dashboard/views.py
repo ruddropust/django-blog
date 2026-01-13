@@ -5,8 +5,12 @@ from django.contrib.auth.decorators import login_required
 from blogs.models import Blog,Category
 from django.contrib import messages
 from django.template.defaultfilters import slugify
-from dashboard.forms import AddBlogForm,EditBlogForm
+from dashboard.forms import AddBlogForm,EditBlogForm, AddUserForm
 from django.utils.text import slugify
+from aboutus.admin import CustomUserAdmin
+from django.contrib.auth import get_user_model
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 @login_required(login_url='login')
@@ -163,3 +167,77 @@ def delete_post(request, id):
         messages.success(request, "Category deleted successfully!")
         return redirect('posts')
     return redirect('posts')
+
+
+# Users
+def users(request):
+    User = get_user_model()
+    if request.user.is_superuser:
+        users = User.objects.filter(is_superuser=False).prefetch_related('groups')
+    else:
+        users = User.objects.filter(is_superuser=False).exclude(
+                groups__name='manager').prefetch_related('groups')
+
+    for user in users:
+        print(", ".join(user.groups.values_list('name', flat=True)))
+
+    context = {'users': users}
+    return render(request, 'users.html', context)
+
+def delete_user(request, id):
+    user = get_user_model().objects.get(id=id)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "Category deleted successfully!")
+        return redirect('users')
+
+
+def edit_user(request, id):
+    User = get_user_model()
+    user = get_object_or_404(User, id=id)
+
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '').strip()
+        user_email = request.POST.get('user_email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+
+        if User.objects.filter(username__iexact=user_name).exclude(id=user.id).exists():
+            messages.warning(request, user_name+' Username already taken')
+
+        elif User.objects.filter(email__iexact=user_email).exclude(id=user.id).exists():
+            messages.warning(request, user_email+' Email already taken')
+
+        else:
+            try:
+                validate_email(user_email)
+
+                user.username = user_name
+                user.email = user_email
+                user.first_name = first_name
+                user.last_name = last_name
+                user.save()
+
+                messages.success(request, 'User updated successfully')
+                return redirect('users')
+
+            except ValidationError:
+                messages.error(request, user_email+' Invalid email address')
+
+    return redirect('users')
+
+def add_user(request):
+    User = get_user_model()
+    if request.method == 'POST':
+        fm = AddUserForm(request.POST)
+        
+        if fm.is_valid():
+            fm.save()
+            messages.success(request, 'Sucessfully added user...')
+            return redirect('users')
+    else:
+        fm = AddUserForm()
+    context = {
+        'form':fm
+    }
+    return render(request, 'add_user.html', context)

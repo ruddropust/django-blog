@@ -4,6 +4,7 @@
 
 <div class="row">
 <!--Left Side Bar-->
+{% if request.user.groups.first.name == 'manager' or request.user.groups.first.name == 'editor' or request.user.is_superuser %}
      <!-- load side bar here  -->
       {% include "sidebar.html" %}
 
@@ -12,16 +13,27 @@
 <!--Right Side content-->
     <div class="col-md-9">
         <div class="row">
-            <div class="col">
+            <div class="card card-body text-dark text-center fw-bold mb-3">
+                Log in as a 
+                {% if request.user.is_superuser %}
+                    Super User
+                {% elif request.user.groups.exists %}
+                    {{ request.user.groups.first.name }}
+                {% else %}
+                    User
+                {% endif %}
+            </div>
+
+            <div class="col" onclick="window.location.href='{% url 'categories' %}'" style="cursor: pointer;">
                 <div class="card border-default mb-3">
                     <div class="card-header text-center text-uppercase fw-bold">All Categories</div>
                     <div class="card-body text-dark">
-                        <h5 class="card-title text-center">{{categories_count}}</h5>
+                        <h5 class="card-title text-center">{{ categories_count }}</h5>
                     </div>
                 </div>
             </div>
 
-                        <div class="col">
+            <div class="col" onclick="window.location.href='{% url 'posts' %}'" style="cursor: pointer;">
                 <div class="card border-default mb-3">
                     <div class="card-header text-center text-uppercase fw-bold">All Post</div>
                     <div class="card-body text-dark">
@@ -35,6 +47,7 @@
 
 
 </div>
-
-
+{% else %}
+<h3>You do not have permission to access this page.</h3>
+{% endif %}
 {% endblock %}

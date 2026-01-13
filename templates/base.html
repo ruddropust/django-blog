@@ -44,7 +44,9 @@
 
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><a class="dropdown-item" href=" {% url "dashboard" %}">Dashboard</a></li>
+                {% if request.user.groups.first.name == 'manager' or request.user.is_superuser or request.user.groups.first.name == 'editor'%}
+                  <li><a class="dropdown-item" href=" {% url "dashboard" %}">Dashboard</a></li>
+                {% endif %}
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href=" {% url "logout" %}">Logout</a></li>
               </ul>
